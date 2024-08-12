@@ -1,0 +1,12 @@
+dspy
+python-dotenv
+aiohttp
+cachetools
+wikipedia
+backoff
+nest_asyncio
+rouge
+sentence-transformers
+torch
+transformers
+openai
