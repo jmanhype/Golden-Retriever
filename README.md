@@ -1,4 +1,4 @@
-# Golden-Retriever
+# Golden-Retriever: A Framework for High-Fidelity Agentic Retrieval Augmented Generation 
 
 Golden-Retriever is a framework for high-fidelity retrieval augmented generation in industrial knowledge bases. It integrates jargon identification, context recognition, and question augmentation to overcome challenges in specialized domains.
 
