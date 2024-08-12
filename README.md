@@ -1,0 +1,2 @@
+# Golden-Retriever-A-Framework-for-High-Fidelity-Agentic-Retrieval-Augmented-Generation
+A framework for high-fidelity retrieval augmented generation in industrial knowledge bases. Integrates jargon identification, context recognition, and question augmentation to overcome challenges in specialized domains. Extensible architecture for efficient querying and answering of complex, domain-specific questions.
