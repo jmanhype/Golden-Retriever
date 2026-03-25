@@ -1,72 +1,55 @@
-# Golden-Retriever: A Framework for High-Fidelity Agentic Retrieval Augmented Generation 
+# Golden-Retriever
 
-Golden-Retriever is a framework for high-fidelity retrieval augmented generation in industrial knowledge bases. It integrates jargon identification, context recognition, and question augmentation to overcome challenges in specialized domains.
+DSPy-based retrieval-augmented generation (RAG) system for domain-specific question answering. Implements the Golden-Retriever paper approach: identify jargon, recognize context, augment the question, then retrieve and generate.
 
-## Features
+## Pipeline
 
-- Jargon identification and definition retrieval
-- Context recognition for domain-specific questions
-- Dynamic question augmentation
-- Retrieval-augmented generation using DSPy
-- Adaptive answer generation with reasoning
-- Extensible and customizable architecture
+1. **Jargon identification** -- extracts technical terms from the question
+2. **Dictionary lookup** -- checks a local dictionary, then Wikipedia, then GPT as fallback
+3. **Context recognition** -- identifies the relevant domain
+4. **Question augmentation** -- rewrites the question with jargon definitions and context
+5. **Retrieval** -- fetches passages via ColBERTv2 (hosted endpoint)
+6. **Answer generation** -- ChainOfThought produces reasoning and a final answer
 
-## Installation
+## Files
+
+| File | Purpose |
+|---|---|
+| `app.py` | All logic: RAG pipeline, jargon dictionary, training data, evaluation, interactive loop (~300 lines) |
+| `requirements.txt` | Dependencies |
+
+This is a single-file project.
+
+## Dependencies
+
+dspy, openai, aiohttp, wikipedia, rouge, sentence-transformers, cachetools, nest-asyncio, backoff.
+
+## Requirements
+
+- Python 3.8+
+- `OPENAI_API_KEY` in `.env`
+- Network access to the ColBERTv2 endpoint at `20.102.90.50:2017`
+
+## Setup
 
 ```bash
-git clone https://github.com/yourusername/golden-retriever.git
-cd golden-retriever
+git clone https://github.com/jmanhype/Golden-Retriever.git
+cd Golden-Retriever
 pip install -r requirements.txt
+cp .env-sample .env  # add OPENAI_API_KEY
+python app.py
 ```
 
-## Configuration
+The script compiles the RAG pipeline using BootstrapFewShotWithRandomSearch on 15 training examples, evaluates on 5, then enters an interactive question loop.
 
-Set your OpenAI API key in a `.env` file:
+## Evaluation
 
-```
-OPENAI_API_KEY=your_api_key_here
-```
+Uses ROUGE-L and semantic similarity (all-MiniLM-L6-v2) against 10 hardcoded Q&A pairs about storage technology (SSDs, NVMe, NAND flash).
 
-## Usage
+## Status
 
-```python
-from golden_retriever import GoldenRetrieverRAG
-
-# Initialize the framework
-rag = GoldenRetrieverRAG()
-
-# Set up the necessary modules
-rag.identify_jargon = dspy.Predict("question -> jargon_terms")
-rag.identify_context = dspy.Predict("question -> context")
-rag.augment_question = dspy.ChainOfThought("question, jargon_definitions, context -> augmented_question")
-rag.generate_answer = ImprovedAnswerGenerator()
-
-# Compile the RAG instance (optional)
-compiled_rag = teleprompter.compile(rag, trainset=trainset, valset=devset)
-
-# Ask a question
-question = "What is the role of wear leveling in SSDs?"
-result = compiled_rag(question)
-
-print(result.answer)
-```
-
-## Training and Evaluation
-
-The framework includes functionality for generating training data, compiling the RAG instance using teleprompter, and evaluating the model's performance.
-
-## Interactive Mode
-
-Run the script to enter an interactive mode where you can ask questions and receive detailed responses, including jargon definitions, context, reasoning, and retrieved passages.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+Proof of concept. The training set is 10 manually written Q&A pairs, so the compiled pipeline is fitted to a narrow domain. The ColBERTv2 endpoint is a third-party hosted instance that may go offline. There are no tests.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgements
-
-This implementation is based on the DSPy library and the concepts from the paper "Golden-Retriever: High-Fidelity Agentic Retrieval Augmented Generation for Industrial Knowledge Base".
+MIT
